@@ -1,0 +1,12 @@
+# Ignore node modules and build outputs
+node_modules
+dist
+
+# Ignore local development files
+.vscode
+.DS_Store
+.env
+
+# Ignore large video files
+public/assets/FINAL_FULL_23_24_CITY_EDITION.mp4
+node_modules
