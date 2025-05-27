@@ -1,178 +1,165 @@
 import { useState } from 'react';
 import {
   Box,
-  Grid,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Slider,
-  Checkbox,
-  FormControlLabel,
-  Popover,
-  Button
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  IconButton,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { usePlayerData } from '../hooks/usePlayerData';
 import PlayerCard from './PlayerCard';
-import type { Player } from '../types';
+import { usePlayerData } from '../hooks/usePlayerData';
+import FilterDropdown from '../components/FilterDropdown';
 
 export default function BigBoard() {
   const allPlayers = usePlayerData();
+  const [search, setSearch] = useState('');
+  const [view, setView] = useState<'card' | 'list'>('card');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const [interestFilter, setInterestFilter] = useState<string>('All');
-  const [typeFilter, setTypeFilter] = useState<string>('All');
-  const [minGrade, setMinGrade] = useState<number>(0);
-  const [internationalOnly, setInternationalOnly] = useState<boolean>(false);
-  const [top10Only, setTop10Only] = useState<boolean>(false);
+  const [filters, setFilters] = useState({
+    interestLevel: '',
+    draftType: '',
+    minGrade: 0,
+    internationalOnly: false,
+  });
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleFilterClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'filter-popover' : undefined;
-
-  const averageRank = (ranking: Record<string, number | null>): number => {
-    const values = Object.entries(ranking)
-      .filter(([key, val]) => key !== 'playerId' && typeof val === 'number')
-      .map(([_, val]) => val as number);
-
-    return values.length
-      ? Number((values.reduce((a, b) => a + b, 0) / values.length).toFixed(1))
-      : 999;
-  };
-
-  const filtered = allPlayers
-    .map((p) => ({
-      ...p,
-      avgRank: p.ranking ? averageRank(p.ranking) : 999,
-      lastReport: p.reports?.[p.reports.length - 1] || null,
-    }))
+  const filteredPlayers = allPlayers
+    .filter((p) =>
+      p.bio.name.toLowerCase().includes(search.toLowerCase())
+    )
     .filter((p) => {
-      const r = p.lastReport;
-
-      if (interestFilter !== 'All' && r?.interest !== interestFilter) return false;
-      if (typeFilter !== 'All' && r?.type !== typeFilter) return false;
-      if (minGrade > 0 && (r?.grade ?? 0) < minGrade) return false;
-      if (internationalOnly && p.bio.homeCountry === 'USA') return false;
-      if (top10Only && p.avgRank > 10) return false;
-
+      if (filters.interestLevel && p.interest !== filters.interestLevel) return false;
+      if (filters.draftType && p.draftType !== filters.draftType) return false;
+      if (filters.minGrade && (p.scoutGrade ?? 0) < filters.minGrade) return false;
+      if (filters.internationalOnly && !p.international) return false;
       return true;
-    })
-    .sort((a, b) => a.avgRank - b.avgRank);
+    });
 
   return (
-    <Box p={3}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold">NBA Draft Big Board</Typography>
-          <Typography variant="subtitle2" color="text.secondary">
-            Dallas Mavericks Scouting Department – Internal Use Only
-          </Typography>
-        </Box>
-
-        <Button
-          variant="outlined"
-          startIcon={<FilterListIcon />}
-          onClick={handleFilterClick}
-          sx={{ textTransform: 'none', fontWeight: 600 }}
-        >
-          Filters
-        </Button>
-
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleFilterClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <Box sx={{ p: 2, width: 300 }}>
-            <Typography fontWeight="bold" gutterBottom>Filters</Typography>
-
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Interest Level</InputLabel>
-              <Select
-                value={interestFilter}
-                label="Interest Level"
-                onChange={(e) => setInterestFilter(e.target.value)}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="High">Green</MenuItem>
-                <MenuItem value="Medium">Yellow</MenuItem>
-                <MenuItem value="Low">Red</MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Draft Category</InputLabel>
-              <Select
-                value={typeFilter}
-                label="Draft Category"
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="Need">Need</MenuItem>
-                <MenuItem value="Want">Want</MenuItem>
-                <MenuItem value="BPA">BPA</MenuItem>
-              </Select>
-            </FormControl>
-
-            <Typography gutterBottom>Min Grade: {minGrade}</Typography>
-            <Slider
-              value={minGrade}
-              onChange={(_, val) => setMinGrade(val as number)}
-              step={1}
-              min={0}
-              max={10}
-              sx={{ mb: 2 }}
-            />
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={internationalOnly}
-                  onChange={(e) => setInternationalOnly(e.target.checked)}
-                />
-              }
-              label="International Only"
-            />
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={top10Only}
-                  onChange={(e) => setTop10Only(e.target.checked)}
-                />
-              }
-              label="Top 10 Only"
-            />
-          </Box>
-        </Popover>
+    <Box p={4}>
+      {/* Header */}
+      <Box textAlign="center" mt={0} mb={2}>
+        <Typography variant="h3" fontWeight="bold" color="#004D96" gutterBottom>
+          Draft Big Board
+        </Typography>
+        <Typography variant="subtitle1" color="textSecondary">
+          Dallas Mavericks Scouting Department – Internal Use Only
+        </Typography>
       </Box>
 
-      <Grid container spacing={3}>
-        {filtered.map((player) => (
-          <Grid item xs={12} sm={6} md={4} display="flex" key={player.bio.playerId}>
-            <PlayerCard player={player} />
-          </Grid>
-        ))}
-      </Grid>
+      {/* Unified Controls Bar */}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        p={2}
+        mb={2}
+        border="1px solid #ccc"
+        borderRadius={2}
+        bgcolor="#fafafa"
+        flexWrap="wrap"
+        gap={2}
+      >
+        {/* Search Field */}
+        <TextField
+          size="small"
+          sx={{ flex: 1, minWidth: '200px' }}
+          placeholder="Search player..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        {/* View toggle + Filter icon */}
+        <Box display="flex" alignItems="center" gap={1}>
+          <ToggleButtonGroup
+            size="small"
+            value={view}
+            exclusive
+            onChange={(_, val) => val && setView(val)}
+          >
+            <ToggleButton value="card">Card View</ToggleButton>
+            <ToggleButton value="list">List View</ToggleButton>
+          </ToggleButtonGroup>
+
+          <IconButton onClick={() => setShowFilters(!showFilters)} color="primary">
+            <FilterListIcon />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* Filter Dropdown */}
+      <FilterDropdown open={showFilters} filters={filters} onChange={setFilters} />
+
+      {/* CARD VIEW */}
+      {view === 'card' && (
+        <Grid container spacing={3}>
+          {filteredPlayers.map((p) => (
+            <Grid item xs={12} sm={6} md={3} lg={3} key={p.bio.playerId}>
+              <PlayerCard player={p} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      {/* LIST VIEW */}
+      {view === 'list' && (
+        <Paper>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell align="right">PTS</TableCell>
+                <TableCell align="right">REB</TableCell>
+                <TableCell align="right">AST</TableCell>
+                <TableCell align="right">FG%</TableCell>
+                <TableCell align="right">Avg Rank</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredPlayers.map((p, i) => {
+                const stats = p.stats?.perGame ?? {};
+                const scoutRanks = Object.values(p.ranking ?? {}).filter(
+                  (v): v is number => typeof v === 'number'
+                );
+                const avgRank =
+                  scoutRanks.length > 0
+                    ? (
+                        scoutRanks.reduce((sum, r) => sum + r, 0) /
+                        scoutRanks.length
+                      ).toFixed(1)
+                    : '—';
+
+                const fgPct =
+                  stats.fgm && stats.fga
+                    ? ((stats.fgm / stats.fga) * 100).toFixed(1)
+                    : '—';
+
+                return (
+                  <TableRow key={p.bio.playerId}>
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{p.bio.name}</TableCell>
+                    <TableCell align="right">{stats.pts ?? '—'}</TableCell>
+                    <TableCell align="right">{stats.reb ?? '—'}</TableCell>
+                    <TableCell align="right">{stats.ast ?? '—'}</TableCell>
+                    <TableCell align="right">{fgPct}</TableCell>
+                    <TableCell align="right">{avgRank}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
+      )}
     </Box>
   );
 }

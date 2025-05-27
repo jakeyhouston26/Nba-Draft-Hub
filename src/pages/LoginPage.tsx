@@ -57,12 +57,12 @@ export default function LoginPage() {
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-      {/* Mavericks logo top-left */}
+     
       <Box sx={{ position: 'absolute', top: 24, left: 32, zIndex: 10 }}>
         <img src="/assets/mavs logo.png" alt="Mavs Logo" style={{ height: 60 }} />
       </Box>
 
-      {/* Left: login form */}
+      
       <Box
         sx={{
           width: '50%',
@@ -136,7 +136,7 @@ export default function LoginPage() {
         </Container>
       </Box>
 
-      {/* Right: video background */}
+      
       <Box sx={{ width: '50%', position: 'relative' }}>
         <video
           ref={videoRef}
@@ -151,7 +151,7 @@ export default function LoginPage() {
             display: 'block',
           }}
         >
-          <source src="/assets/FINAL_FULL_23_24_CITY_EDITION.mp4" type="video/mp4" />
+          <source src="/assets/1video.mp4" type="video/mp4" />
         </video>
 
         {!audioEnabled && (

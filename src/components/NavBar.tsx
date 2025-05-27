@@ -64,7 +64,7 @@ import {
             />
           </Box>
   
-          {/* Right-side nav */}
+          
           <Box display="flex" alignItems="center" gap={2}>
             <Box
               component="button"
@@ -94,7 +94,7 @@ import {
             </Box>
             <Box
               component="button"
-              onClick={() => navigate('/about')}
+              onClick={() => navigate('/watchlist')}
               style={{
                 background: 'none',
                 border: 'none',
@@ -103,10 +103,25 @@ import {
                 cursor: 'pointer',
               }}
             >
-              About
+                Watchlist
             </Box>
+
+            <Box
+  component="button"
+  onClick={() => navigate('/compare')}
+  style={{
+    background: 'none',
+    border: 'none',
+    color: 'white',
+    fontSize: '1rem',
+    cursor: 'pointer',
+  }}
+>
+  Compare
+</Box>
+
   
-            {/* Expandable Search */}
+            
             <Box
   component="form"
   onSubmit={handleSearchSubmit}
@@ -145,7 +160,7 @@ import {
 </Box>
 
   
-            {/* User dropdown */}
+            
             <IconButton onClick={handleMenuClick} color="inherit">
               <AccountCircle />
             </IconButton>

@@ -49,15 +49,7 @@ const measurementLabels: Record<string, string> = {
 };
 
 export default function PlayerProfile({ player }: { player: Player }) {
-  const [reports, setReports] = useState<
-    {
-      name: string;
-      text: string;
-      grade: number | null;
-      interest: 'High' | 'Medium' | 'Low';
-      type: 'Need' | 'Want' | 'BPA';
-    }[]
-  >([]);
+  const [reports, setReports] = useState(player.reports ?? []);
   const [newReport, setNewReport] = useState('');
   const [reporterName, setReporterName] = useState('');
   const [grade, setGrade] = useState<number | null>(null);
@@ -69,9 +61,9 @@ export default function PlayerProfile({ player }: { player: Player }) {
 
   const stats = player.stats?.[statMode];
   const summaryStats = {
-    pts: stats?.pts ?? 0,
-    reb: stats?.reb ?? 0,
-    ast: stats?.ast ?? 0,
+    pts: stats?.pts ?? '—',
+    reb: stats?.reb ?? '—',
+    ast: stats?.ast ?? '—',
     fgPct:
       stats && stats.fgm && stats.fga
         ? ((stats.fgm / stats.fga) * 100).toFixed(1)
@@ -80,33 +72,37 @@ export default function PlayerProfile({ player }: { player: Player }) {
 
   const handleAddReport = () => {
     if (!newReport.trim() || !reporterName.trim()) return;
-    setReports([
-      ...reports,
-      {
-        name: reporterName.trim(),
-        text: newReport.trim(),
-        grade,
-        interest,
-        type,
-      },
-    ]);
+    const newEntry = {
+      name: reporterName.trim(),
+      text: newReport.trim(),
+      grade,
+      interest,
+      type,
+    };
+    const updated = [...reports, newEntry];
+    setReports(updated);
     setNewReport('');
     setReporterName('');
     setGrade(null);
     setInterest('Medium');
     setType('BPA');
     setOpen(false);
+
+    localStorage.setItem(
+      `reports-${player.bio.playerId}`,
+      JSON.stringify(updated)
+    );
   };
 
   return (
     <Box p={4}>
-      {/* Header */}
-      <Grid container spacing={3} alignItems="center" mb={2}>
+     
+      <Grid container spacing={3} alignItems="center" mb={3}>
         <Grid item>
           <Avatar
             src={player.bio.photoUrl || undefined}
             alt={player.bio.name}
-            sx={{ width: 150, height: 150, borderRadius: 2 }}
+            sx={{ width: 150, height: 150 }}
           />
         </Grid>
         <Grid item xs>
@@ -117,45 +113,35 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Grid>
       </Grid>
 
-      {/* Stat Summary Bar */}
-      <Grid container spacing={2} mb={3}>
+      {/* Stat summary */}
+      <Grid container spacing={3} mb={3}>
         {[
           { label: 'PTS', value: summaryStats.pts },
           { label: 'REB', value: summaryStats.reb },
           { label: 'AST', value: summaryStats.ast },
           { label: 'FG%', value: summaryStats.fgPct },
         ].map((item) => (
-          <Grid item xs={6} sm={3} key={item.label}>
-            <Box
-              sx={{
-                backgroundColor: '#00538C',
-                color: 'white',
-                borderRadius: 2,
-                textAlign: 'center',
-                py: 2,
-              }}
-            >
+          <Grid item xs={12} sm={6} md={3} key={item.label}>
+            <Box textAlign="center">
               <Typography variant="h5" fontWeight="bold">{item.value}</Typography>
-              <Typography variant="body2">{item.label}</Typography>
+              <Typography variant="caption">{item.label}</Typography>
             </Box>
           </Grid>
         ))}
       </Grid>
 
-      {/* Tabs + Add Report Button */}
+      
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Tabs value={tabIndex} onChange={(_, newVal) => setTabIndex(newVal)}>
           <Tab label="Stats" />
           <Tab label="Measurements" />
-          <Tab label="Scouting Reports" />
+          <Tab label="Reports" />
+          <Tab label="Rankings" />
         </Tabs>
-
-        <Button variant="contained" onClick={() => setOpen(true)}>
-          Add Report
-        </Button>
+        <Button variant="contained" onClick={() => setOpen(true)}>Add Report</Button>
       </Box>
 
-      {/* Tab 0: Stats */}
+      
       {tabIndex === 0 && (
         <Card sx={{ mb: 4 }}>
           <CardContent>
@@ -171,25 +157,16 @@ export default function PlayerProfile({ player }: { player: Player }) {
               </ToggleButtonGroup>
             </Box>
             {stats ? (
-              <Box component="table" width="100%" sx={{ borderCollapse: 'collapse' }}>
-                {Object.entries(stats).map(([key, val], idx) => (
-                  <Box
-                    key={key}
-                    component="tr"
-                    sx={{
-                      backgroundColor: idx % 2 === 0 ? '#f4f6f8' : 'white',
-                      borderBottom: '1px solid #ddd',
-                    }}
-                  >
-                    <Box component="td" sx={{ px: 2, py: 1, fontWeight: 600 }}>
-                      {key.toUpperCase()}
-                    </Box>
-                    <Box component="td" sx={{ px: 2, py: 1 }}>
-                      {val}
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  {Object.entries(stats).map(([key, val], idx) => (
+                    <tr key={key} style={{ backgroundColor: idx % 2 ? '#f4f6f8' : 'white' }}>
+                      <td style={{ padding: '8px', fontWeight: 600 }}>{key.toUpperCase()}</td>
+                      <td style={{ padding: '8px' }}>{val}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
               <Typography>No stats available.</Typography>
             )}
@@ -197,31 +174,25 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-      {/* Tab 1: Measurements */}
+     
       {tabIndex === 1 && (
         <Card sx={{ mb: 4 }}>
           <CardContent>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>Measurements</Typography>
             {player.measurement ? (
-              <Box component="table" width="100%" sx={{ borderCollapse: 'collapse' }}>
-                {Object.entries(player.measurement).map(([key, val], idx) => (
-                  <Box
-                    key={key}
-                    component="tr"
-                    sx={{
-                      backgroundColor: idx % 2 === 0 ? '#f8f9fa' : '#fff',
-                      borderBottom: '1px solid #eee',
-                    }}
-                  >
-                    <Box component="td" sx={{ px: 2, py: 1, fontWeight: 600 }}>
-                      {measurementLabels[key] || key}
-                    </Box>
-                    <Box component="td" sx={{ px: 2, py: 1 }}>
-                      {val ?? '—'}
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  {Object.entries(player.measurement)
+                    .filter(([key]) => key !== 'playerId')
+                    .map(([key, val], idx) => (
+                      <tr key={key} style={{ backgroundColor: idx % 2 ? '#f8f9fa' : '#fff' }}>
+                        <td style={{ padding: '8px', fontWeight: 600 }}>
+                          {measurementLabels[key] || key}
+                        </td>
+                        <td style={{ padding: '8px' }}>{val ?? '—'}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             ) : (
               <Typography>No measurements available.</Typography>
             )}
@@ -229,11 +200,10 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-      {/* Tab 2: Reports */}
+    
       {tabIndex === 2 && (
         <Card>
           <CardContent>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>Scouting Reports</Typography>
             <Stack spacing={2}>
               {reports.length > 0 ? (
                 reports.map((r, i) => (
@@ -243,7 +213,9 @@ export default function PlayerProfile({ player }: { player: Player }) {
                     </Typography>
                     <Stack direction="row" spacing={1} mt={1} mb={1}>
                       <Chip label={r.interest + ' Interest'} color={
-                        r.interest === 'High' ? 'success' : r.interest === 'Medium' ? 'warning' : 'error'
+                        r.interest === 'High' ? 'success'
+                          : r.interest === 'Medium' ? 'warning'
+                          : 'error'
                       } />
                       <Chip label={r.type} variant="outlined" />
                     </Stack>
@@ -258,7 +230,37 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-      {/* Modal */}
+     
+      {tabIndex === 3 && (
+        <Card>
+          <CardContent>
+            {player.ranking && Object.keys(player.ranking).length > 0 ? (
+              <table style={{ width: '100%', maxWidth: 400, borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f0f0f0' }}>
+                    <th style={{ padding: '10px', textAlign: 'left' }}>Source</th>
+                    <th style={{ padding: '10px', textAlign: 'right' }}>Rank</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(player.ranking)
+                    .filter(([key]) => key !== 'playerId')
+                    .map(([scout, rank], idx) => (
+                      <tr key={idx} style={{ backgroundColor: idx % 2 ? '#f9f9f9' : 'white' }}>
+                        <td style={{ padding: '10px', fontWeight: 600 }}>{scout}</td>
+                        <td style={{ padding: '10px', textAlign: 'right' }}>{rank ?? '—'}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            ) : (
+              <Typography>No rankings available.</Typography>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={modalStyle}>
           <Typography variant="h6" fontWeight="bold" mb={2}>Add Scouting Report</Typography>
