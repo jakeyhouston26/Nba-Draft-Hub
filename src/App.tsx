@@ -1,3 +1,4 @@
+import React from 'react'; 
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
@@ -5,7 +6,7 @@ import Home from './pages/Home';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import LogoTransition from './pages/LogoTransition';
-import Navbar from './components/NavBar';
+import NavBar from './components/NavBar'; 
 import MyReports from './pages/MyReports';
 import Watchlist from './pages/Watchlist';
 import ComparePlayers from './pages/ComparePlayers';
@@ -26,8 +27,8 @@ function App() {
 
   return (
     <>
-      {/* Show Navbar only after login and not on transition */}
-      {!onLoginOrSplash && isLoggedIn && <Navbar />}
+      {/* Show NavBar only after login and not on transition */}
+      {!onLoginOrSplash && isLoggedIn && <NavBar />}
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -38,10 +39,12 @@ function App() {
         <Route path="/reports" element={requireAuth(<MyReports />)} />
         <Route path="/watchlist" element={requireAuth(<Watchlist />)} />
         <Route path="/compare" element={requireAuth(<ComparePlayers />)} />
-        {/* Redirect to home if no match */}
+        {/* Optional: Add a fallback route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );
 }
 
 export default App;
+

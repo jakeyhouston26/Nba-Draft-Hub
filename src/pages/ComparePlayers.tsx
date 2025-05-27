@@ -20,7 +20,7 @@ export default function ComparePlayers() {
         </Typography>
 
         <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} sm={5} md={3}>
+          <Grid item xs={12} sm={5} md={3} component={'div'}>
             <Select
               fullWidth
               value={player1Id}
@@ -56,7 +56,7 @@ export default function ComparePlayers() {
      
       <Grid container spacing={4} justifyContent="center">
         {player1 && (
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} component={'div'}>
             <PlayerProfileCard
               player={player1}
               comparisonAgainst={player2 ?? undefined}
@@ -64,7 +64,7 @@ export default function ComparePlayers() {
           </Grid>
         )}
         {player2 && (
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5}> 
             <PlayerProfileCard
               player={player2}
               comparisonAgainst={player1 ?? undefined}
