@@ -5,7 +5,7 @@ import Home from './pages/Home';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import LogoTransition from './pages/LogoTransition';
-import Navbar from './components/Navbar';
+import Navbar from './components/NavBar';
 import MyReports from './pages/MyReports';
 import Watchlist from './pages/Watchlist';
 import ComparePlayers from './pages/ComparePlayers';
