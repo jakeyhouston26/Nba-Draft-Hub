@@ -57,10 +57,14 @@ export default function PlayerProfileCard({ player, comparisonAgainst }: Props) 
         : '—',
   };
 
-  const highlight = (val: number | string, otherVal: number | string) => {
+  const highlight = (
+    val: number | string | undefined,
+    otherVal: number | string | undefined
+  ): string => {
     if (typeof val !== 'number' || typeof otherVal !== 'number') return 'inherit';
     return val > otherVal ? 'primary.main' : 'inherit';
   };
+  
 
   return (
     <Card sx={{ height: '100%' }}>
@@ -142,7 +146,10 @@ export default function PlayerProfileCard({ player, comparisonAgainst }: Props) 
                           px: 1.5,
                           py: 1,
                           color: highlight(val, otherVal),
-                          fontWeight: val > otherVal ? 600 : 400
+                          fontWeight: highlight(val, otherVal) === 'primary.main' ? 600 : 400
+
+                          
+
                         }}
                       >
                         {val}

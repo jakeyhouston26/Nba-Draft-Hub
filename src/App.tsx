@@ -1,4 +1,5 @@
-import React from 'react'; 
+import type { JSX } from 'react';
+
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';

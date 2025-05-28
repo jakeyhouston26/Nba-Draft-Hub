@@ -17,7 +17,7 @@ import {
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PlayerCard from './PlayerCard';
 import { usePlayerData } from '../hooks/usePlayerData';
-import FilterDropdown from '../components/Filterdropdown'; // ✅ Fix casing
+import FilterDropdown from './FilterDropdown'; // ✅ Fix casing
 
 export default function BigBoard() {
   const allPlayers = usePlayerData();

@@ -20,8 +20,10 @@ export type Player = {
     interest: 'High' | 'Medium' | 'Low';
     type: 'Need' | 'Want' | 'BPA';
   }[];
-  interest?: 'GREEN' | 'YELLOW' | 'RED' | ''; // ✅ Fixes interest error
-  draftType?: string;
+  
+
+  interest?: 'GREEN' | 'YELLOW' | 'RED';
+  draftType?: 'BPA' | 'NEED' | 'WANT';
   scoutGrade?: number;
   international?: boolean;
 };

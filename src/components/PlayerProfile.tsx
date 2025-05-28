@@ -7,7 +7,6 @@ import {
   CardContent,
   Button,
   Stack,
-  Grid,
   Modal,
   TextField,
   Tabs,
@@ -75,7 +74,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
     const newEntry = {
       name: reporterName.trim(),
       text: newReport.trim(),
-      grade,
+      grade: grade ?? 0,
       interest,
       type,
     };
@@ -96,41 +95,53 @@ export default function PlayerProfile({ player }: { player: Player }) {
 
   return (
     <Box p={4}>
-     
-      <Grid container spacing={3} alignItems="center" mb={3}>
-        <Grid item>
-          <Avatar
-            src={player.bio.photoUrl || undefined}
-            alt={player.bio.name}
-            sx={{ width: 150, height: 150 }}
-          />
-        </Grid>
-        <Grid item xs>
+      {/* Header */}
+      <Box
+        display="flex"
+        alignItems="center"
+        flexWrap="wrap"
+        gap={4}
+        mb={4}
+      >
+        <Avatar
+          src={player.bio.photoUrl || undefined}
+          alt={player.bio.name}
+          sx={{ width: 150, height: 150 }}
+        />
+        <Box>
           <Typography variant="h4" fontWeight="bold">{player.bio.name}</Typography>
           <Typography variant="subtitle1" color="text.secondary">
             {player.bio.currentTeam} — {player.bio.league}
           </Typography>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Stat summary */}
-      <Grid container spacing={3} mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        flexWrap="wrap"
+        gap={3}
+        mb={3}
+      >
         {[
           { label: 'PTS', value: summaryStats.pts },
           { label: 'REB', value: summaryStats.reb },
           { label: 'AST', value: summaryStats.ast },
           { label: 'FG%', value: summaryStats.fgPct },
         ].map((item) => (
-          <Grid item xs={12} sm={6} md={3} key={item.label}>
-            <Box textAlign="center">
-              <Typography variant="h5" fontWeight="bold">{item.value}</Typography>
-              <Typography variant="caption">{item.label}</Typography>
-            </Box>
-          </Grid>
+          <Box
+            key={item.label}
+            flex="1 1 120px"
+            textAlign="center"
+          >
+            <Typography variant="h5" fontWeight="bold">{item.value}</Typography>
+            <Typography variant="caption">{item.label}</Typography>
+          </Box>
         ))}
-      </Grid>
+      </Box>
 
-      
+      {/* Tab bar */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Tabs value={tabIndex} onChange={(_, newVal) => setTabIndex(newVal)}>
           <Tab label="Stats" />
@@ -141,7 +152,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
         <Button variant="contained" onClick={() => setOpen(true)}>Add Report</Button>
       </Box>
 
-      
+      {/* Stats tab */}
       {tabIndex === 0 && (
         <Card sx={{ mb: 4 }}>
           <CardContent>
@@ -174,7 +185,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-     
+      {/* Measurements tab */}
       {tabIndex === 1 && (
         <Card sx={{ mb: 4 }}>
           <CardContent>
@@ -200,7 +211,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-    
+      {/* Reports tab */}
       {tabIndex === 2 && (
         <Card>
           <CardContent>
@@ -212,11 +223,16 @@ export default function PlayerProfile({ player }: { player: Player }) {
                       <strong>{r.name}</strong> (Grade: {r.grade ?? '—'})
                     </Typography>
                     <Stack direction="row" spacing={1} mt={1} mb={1}>
-                      <Chip label={r.interest + ' Interest'} color={
-                        r.interest === 'High' ? 'success'
-                          : r.interest === 'Medium' ? 'warning'
-                          : 'error'
-                      } />
+                      <Chip
+                        label={r.interest + ' Interest'}
+                        color={
+                          r.interest === 'High'
+                            ? 'success'
+                            : r.interest === 'Medium'
+                            ? 'warning'
+                            : 'error'
+                        }
+                      />
                       <Chip label={r.type} variant="outlined" />
                     </Stack>
                     <Typography>{r.text}</Typography>
@@ -230,7 +246,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-     
+      {/* Rankings tab */}
       {tabIndex === 3 && (
         <Card>
           <CardContent>
@@ -260,7 +276,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Card>
       )}
 
-      
+      {/* Modal */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={modalStyle}>
           <Typography variant="h6" fontWeight="bold" mb={2}>Add Scouting Report</Typography>
