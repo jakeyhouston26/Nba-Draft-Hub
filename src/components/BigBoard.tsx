@@ -25,7 +25,7 @@ export default function BigBoard() {
   const [view, setView] = useState<'card' | 'list'>('card');
   const [showFilters, setShowFilters] = useState(false);
 
-  const [filters, setFilters] = useState<{
+  const [filters,] = useState<{
     interestLevel: '' | 'GREEN' | 'YELLOW' | 'RED';
     draftType: '' | 'BPA' | 'NEED' | 'WANT';
     minGrade: number;

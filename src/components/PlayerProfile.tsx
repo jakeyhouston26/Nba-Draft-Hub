@@ -1,3 +1,4 @@
+import './PlayerProfile.css';
 import { useState } from 'react';
 import type { Player } from '../types';
 import {
@@ -14,20 +15,8 @@ import {
   Avatar,
   ToggleButton,
   ToggleButtonGroup,
-  Chip
+  Chip,
 } from '@mui/material';
-
-const modalStyle = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 2,
-};
 
 const measurementLabels: Record<string, string> = {
   heightNoShoes: 'Height (No Shoes)',
@@ -95,14 +84,7 @@ export default function PlayerProfile({ player }: { player: Player }) {
 
   return (
     <Box p={4}>
-      {/* Header */}
-      <Box
-        display="flex"
-        alignItems="center"
-        flexWrap="wrap"
-        gap={4}
-        mb={4}
-      >
+      <Box className="profile-header">
         <Avatar
           src={player.bio.photoUrl || undefined}
           alt={player.bio.name}
@@ -116,33 +98,21 @@ export default function PlayerProfile({ player }: { player: Player }) {
         </Box>
       </Box>
 
-      {/* Stat summary */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        flexWrap="wrap"
-        gap={3}
-        mb={3}
-      >
+      <Box className="profile-stat-summary">
         {[
           { label: 'PTS', value: summaryStats.pts },
           { label: 'REB', value: summaryStats.reb },
           { label: 'AST', value: summaryStats.ast },
           { label: 'FG%', value: summaryStats.fgPct },
         ].map((item) => (
-          <Box
-            key={item.label}
-            flex="1 1 120px"
-            textAlign="center"
-          >
+          <Box key={item.label} className="profile-stat-block">
             <Typography variant="h5" fontWeight="bold">{item.value}</Typography>
             <Typography variant="caption">{item.label}</Typography>
           </Box>
         ))}
       </Box>
 
-      {/* Tab bar */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box className="profile-tab-bar">
         <Tabs value={tabIndex} onChange={(_, newVal) => setTabIndex(newVal)}>
           <Tab label="Stats" />
           <Tab label="Measurements" />
@@ -168,12 +138,12 @@ export default function PlayerProfile({ player }: { player: Player }) {
               </ToggleButtonGroup>
             </Box>
             {stats ? (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="profile-table">
                 <tbody>
-                  {Object.entries(stats).map(([key, val], idx) => (
-                    <tr key={key} style={{ backgroundColor: idx % 2 ? '#f4f6f8' : 'white' }}>
-                      <td style={{ padding: '8px', fontWeight: 600 }}>{key.toUpperCase()}</td>
-                      <td style={{ padding: '8px' }}>{val}</td>
+                  {Object.entries(stats).map(([key, val]) => (
+                    <tr key={key} className="profile-table-row">
+                      <td className="profile-table-cell">{key.toUpperCase()}</td>
+                      <td className="profile-table-cell">{val}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -190,16 +160,16 @@ export default function PlayerProfile({ player }: { player: Player }) {
         <Card sx={{ mb: 4 }}>
           <CardContent>
             {player.measurement ? (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="profile-table">
                 <tbody>
                   {Object.entries(player.measurement)
                     .filter(([key]) => key !== 'playerId')
-                    .map(([key, val], idx) => (
-                      <tr key={key} style={{ backgroundColor: idx % 2 ? '#f8f9fa' : '#fff' }}>
-                        <td style={{ padding: '8px', fontWeight: 600 }}>
+                    .map(([key, val]) => (
+                      <tr key={key} className="profile-table-row">
+                        <td className="profile-table-cell">
                           {measurementLabels[key] || key}
                         </td>
-                        <td style={{ padding: '8px' }}>{val ?? '—'}</td>
+                        <td className="profile-table-cell">{val ?? '—'}</td>
                       </tr>
                     ))}
                 </tbody>
@@ -251,20 +221,22 @@ export default function PlayerProfile({ player }: { player: Player }) {
         <Card>
           <CardContent>
             {player.ranking && Object.keys(player.ranking).length > 0 ? (
-              <table style={{ width: '100%', maxWidth: 400, borderCollapse: 'collapse' }}>
+              <table className="rankings-table">
                 <thead>
-                  <tr style={{ backgroundColor: '#f0f0f0' }}>
-                    <th style={{ padding: '10px', textAlign: 'left' }}>Source</th>
-                    <th style={{ padding: '10px', textAlign: 'right' }}>Rank</th>
+                  <tr>
+                    <th>Source</th>
+                    <th>Rank</th>
                   </tr>
                 </thead>
                 <tbody>
                   {Object.entries(player.ranking)
                     .filter(([key]) => key !== 'playerId')
-                    .map(([scout, rank], idx) => (
-                      <tr key={idx} style={{ backgroundColor: idx % 2 ? '#f9f9f9' : 'white' }}>
-                        <td style={{ padding: '10px', fontWeight: 600 }}>{scout}</td>
-                        <td style={{ padding: '10px', textAlign: 'right' }}>{rank ?? '—'}</td>
+                    .map(([scout, rank]) => (
+                      <tr key={scout} className="profile-table-row">
+                        <td className="profile-table-cell">{scout}</td>
+                        <td className="profile-table-cell profile-table-cell-right">
+                          {rank ?? '—'}
+                        </td>
                       </tr>
                     ))}
                 </tbody>
@@ -278,9 +250,8 @@ export default function PlayerProfile({ player }: { player: Player }) {
 
       {/* Modal */}
       <Modal open={open} onClose={() => setOpen(false)}>
-        <Box sx={modalStyle}>
+        <Box className="modal-style">
           <Typography variant="h6" fontWeight="bold" mb={2}>Add Scouting Report</Typography>
-
           <TextField
             label="Your Name"
             fullWidth
@@ -288,7 +259,6 @@ export default function PlayerProfile({ player }: { player: Player }) {
             onChange={(e) => setReporterName(e.target.value)}
             sx={{ mb: 2 }}
           />
-
           <TextField
             label="Internal Grade (1–10)"
             fullWidth
@@ -298,7 +268,6 @@ export default function PlayerProfile({ player }: { player: Player }) {
             value={grade ?? ''}
             onChange={(e) => setGrade(Number(e.target.value))}
           />
-
           <Box mb={2}>
             <Typography fontWeight="bold" mb={1}>Interest Level</Typography>
             <ToggleButtonGroup
@@ -312,7 +281,6 @@ export default function PlayerProfile({ player }: { player: Player }) {
               <ToggleButton value="Low">Red</ToggleButton>
             </ToggleButtonGroup>
           </Box>
-
           <Box mb={2}>
             <Typography fontWeight="bold" mb={1}>Draft Category</Typography>
             <ToggleButtonGroup
@@ -326,7 +294,6 @@ export default function PlayerProfile({ player }: { player: Player }) {
               <ToggleButton value="BPA">BPA</ToggleButton>
             </ToggleButtonGroup>
           </Box>
-
           <TextField
             label="Scouting Report"
             multiline
@@ -336,7 +303,6 @@ export default function PlayerProfile({ player }: { player: Player }) {
             onChange={(e) => setNewReport(e.target.value)}
             sx={{ mb: 2 }}
           />
-
           <Button variant="contained" fullWidth onClick={handleAddReport}>
             Submit
           </Button>

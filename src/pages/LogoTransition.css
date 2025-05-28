@@ -1,0 +1,17 @@
+.logo-transition {
+    height: 100vh;
+    width: 100vw;
+    background-image: url('/assets/logo-transition.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: fadeFullScreen 3.5s ease-in-out forwards;
+  }
+  
+  @keyframes fadeFullScreen {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  

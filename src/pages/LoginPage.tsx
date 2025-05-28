@@ -1,3 +1,4 @@
+import './LoginPage.css';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -6,7 +7,6 @@ import {
   Container,
   TextField,
   Typography,
-  Paper,
   Checkbox,
   FormControlLabel
 } from '@mui/material';
@@ -19,7 +19,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [audioEnabled, setAudioEnabled] = useState(false);
 
-  // Enable video sound on user click
   const handleEnableAudio = () => {
     if (videoRef.current) {
       videoRef.current.muted = false;
@@ -35,9 +34,9 @@ export default function LoginPage() {
     e.preventDefault();
     localStorage.setItem('scoutLoggedIn', 'true');
     localStorage.setItem('scoutEmail', email);
-    navigate('/transition'); // new splash route
+    navigate('/transition');
   };
-  
+
   const handleGoogleLogin = () => {
     localStorage.setItem('scoutLoggedIn', 'true');
     localStorage.setItem('scoutEmail', 'google.user@mavs.com');
@@ -56,22 +55,12 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-     
-      <Box sx={{ position: 'absolute', top: 24, left: 32, zIndex: 10 }}>
-        <img src="/assets/mavs logo.png" alt="Mavs Logo" style={{ height: 60 }} />
+    <Box className="login-root">
+      <Box className="login-logo-container">
+        <img src="/assets/mavs logo.png" alt="Mavs Logo" className="login-logo" />
       </Box>
 
-      
-      <Box
-        sx={{
-          width: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#fff',
-        }}
-      >
+      <Box className="login-left">
         <Container maxWidth="xs">
           <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -136,49 +125,24 @@ export default function LoginPage() {
         </Container>
       </Box>
 
-      
-      <Box sx={{ width: '50%', position: 'relative' }}>
+      <Box className="login-video-container">
         <video
           ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-          }}
+          className="login-video"
         >
           <source src="/assets/1video.mp4" type="video/mp4" />
         </video>
 
         {!audioEnabled && (
-          <Box
-            position="absolute"
-            bottom={20}
-            right={20}
-            zIndex={10}
-          >
+          <Box className="enable-audio-button">
             <Button
               size="small"
               variant="outlined"
               onClick={handleEnableAudio}
-              sx={{
-                color: '#fff',
-                borderColor: '#fff',
-                textTransform: 'none',
-                fontSize: '0.75rem',
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 2,
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.2)',
-                  borderColor: '#ccc',
-                },
-              }}
             >
               Enable Audio
             </Button>

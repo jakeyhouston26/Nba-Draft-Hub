@@ -1,12 +1,12 @@
 import { usePlayerData } from '../hooks/usePlayerData';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import PlayerCard from '../components/PlayerCard';
 
 export default function Watchlist() {
   const players = usePlayerData();
 
-  const bookmarked = players.filter(p =>
-    localStorage.getItem(`scout-bookmark-${p.bio.playerId}`) === 'true'
+  const bookmarked = players.filter(
+    (p) => localStorage.getItem(`scout-bookmark-${p.bio.playerId}`) === 'true'
   );
 
   return (
@@ -18,18 +18,26 @@ export default function Watchlist() {
       {bookmarked.length === 0 ? (
         <Typography>No bookmarked players yet.</Typography>
       ) : (
-        <Grid container spacing={3}>
-          {bookmarked.map(player => (
-            <Grid container spacing={3} component="div">
-            {bookmarked.map((player) => (
-              <Box key={player.bio.playerId} sx={{ width: '100%', maxWidth: 300 }}>
-                <PlayerCard player={player} />
-              </Box>
-            ))}
-          </Grid>
-          
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          gap={3}
+          mt={3}
+          justifyContent="flex-start"
+        >
+          {bookmarked.map((player) => (
+            <Box
+              key={player.bio.playerId}
+              sx={{
+                width: '100%',
+                maxWidth: 300,
+                flex: '1 1 300px'
+              }}
+            >
+              <PlayerCard player={player} />
+            </Box>
           ))}
-        </Grid>
+        </Box>
       )}
     </Box>
   );

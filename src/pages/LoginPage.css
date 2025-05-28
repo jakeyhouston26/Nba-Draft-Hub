@@ -1,0 +1,60 @@
+.login-root {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .login-logo-container {
+    position: absolute;
+    top: 24px;
+    left: 32px;
+    z-index: 10;
+  }
+  
+  .login-logo {
+    height: 60px;
+  }
+  
+  .login-left {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+  }
+  
+  .login-video-container {
+    width: 50%;
+    position: relative;
+  }
+  
+  .login-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .enable-audio-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+  }
+  
+  .enable-audio-button .MuiButton-root {
+    color: #fff;
+    border-color: #fff;
+    text-transform: none;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .enable-audio-button .MuiButton-root:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ccc;
+  }
+  
