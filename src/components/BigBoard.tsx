@@ -17,7 +17,7 @@ import {
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PlayerCard from './PlayerCard';
 import { usePlayerData } from '../hooks/usePlayerData';
-import FilterDropdown from './FilterDropdown'; // ✅ Fix casing
+//import FilterDropdown from './FilterDropdown'; // ✅ Fix casing
 
 export default function BigBoard() {
   const allPlayers = usePlayerData();
@@ -98,7 +98,7 @@ export default function BigBoard() {
       </Box>
 
       {/* Filter Dropdown */}
-      <FilterDropdown open={showFilters} filters={filters} onChange={setFilters} />
+      
 
       {/* CARD VIEW */}
       {view === 'card' && (
