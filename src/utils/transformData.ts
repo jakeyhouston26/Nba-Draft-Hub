@@ -1,10 +1,10 @@
 import rawData from '../data/intern_project_data.json';
-import type { Player, PlayerBio, ScoutRanking, Measurement } from '../types';
+import type { Player } from '../types';
 
 export function buildPlayerList(): Player[] {
-  const bios: PlayerBio[] = rawData.bio;
-  const rankings: ScoutRanking[] = rawData.scoutRankings;
-  const measurements: Measurement[] = rawData.measurements;
+  const bios: any[] = rawData.bio;
+  const rankings: any[] = rawData.scoutRankings;
+  const measurements: any[] = rawData.measurements;
   const gameLogs = rawData.game_logs;
 
   return bios.map((bio) => {

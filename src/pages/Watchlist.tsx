@@ -20,9 +20,14 @@ export default function Watchlist() {
       ) : (
         <Grid container spacing={3}>
           {bookmarked.map(player => (
-            <Grid item xs={12} sm={6} md={3} key={player.bio.playerId} display="flex" justifyContent="center">
-              <PlayerCard player={player} />
-            </Grid>
+            <Grid container spacing={3} component="div">
+            {bookmarked.map((player) => (
+              <Box key={player.bio.playerId} sx={{ width: '100%', maxWidth: 300 }}>
+                <PlayerCard player={player} />
+              </Box>
+            ))}
+          </Grid>
+          
           ))}
         </Grid>
       )}

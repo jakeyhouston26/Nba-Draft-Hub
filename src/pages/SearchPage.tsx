@@ -27,9 +27,10 @@ export default function SearchPage() {
       ) : (
         <Grid container spacing={3}>
           {filtered.map(player => (
-            <Grid item xs={12} sm={6} md={4} key={player.bio.playerId}>
-              <PlayerCard player={player} />
-            </Grid>
+            <Box key={player.bio.playerId} sx={{ width: '100%', maxWidth: 300 }}>
+            <PlayerCard player={player} />
+          </Box>
+          
           ))}
         </Grid>
       )}

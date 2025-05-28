@@ -1,5 +1,5 @@
 import { TextField, Box } from '@mui/material';
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 interface FiltersProps {
   onSearch: (term: string) => void;

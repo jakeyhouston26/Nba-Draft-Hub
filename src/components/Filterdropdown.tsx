@@ -12,7 +12,7 @@ import {
   
   interface FilterState {
     interestLevel: '' | 'GREEN' | 'YELLOW' | 'RED';
-    draftType: '' | 'NEED' | 'WANT' | 'BPA';
+    draftType: '' | 'BPA' | 'NEED' | 'WANT';
     minGrade: number;
     internationalOnly: boolean;
   }

@@ -17,7 +17,7 @@ import {
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PlayerCard from './PlayerCard';
 import { usePlayerData } from '../hooks/usePlayerData';
-import FilterDropdown from '../components/FilterDropdown';
+import FilterDropdown from '../components/Filterdropdown'; // ✅ Fix casing
 
 export default function BigBoard() {
   const allPlayers = usePlayerData();
@@ -25,7 +25,12 @@ export default function BigBoard() {
   const [view, setView] = useState<'card' | 'list'>('card');
   const [showFilters, setShowFilters] = useState(false);
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{
+    interestLevel: '' | 'GREEN' | 'YELLOW' | 'RED';
+    draftType: '' | 'BPA' | 'NEED' | 'WANT';
+    minGrade: number;
+    internationalOnly: boolean;
+  }>({
     interestLevel: '',
     draftType: '',
     minGrade: 0,
@@ -56,7 +61,7 @@ export default function BigBoard() {
         </Typography>
       </Box>
 
-      {/* Unified Controls Bar */}
+      {/* Controls */}
       <Box
         display="flex"
         justifyContent="space-between"
@@ -69,7 +74,6 @@ export default function BigBoard() {
         flexWrap="wrap"
         gap={2}
       >
-        {/* Search Field */}
         <TextField
           size="small"
           sx={{ flex: 1, minWidth: '200px' }}
@@ -77,8 +81,6 @@ export default function BigBoard() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
-        {/* View toggle + Filter icon */}
         <Box display="flex" alignItems="center" gap={1}>
           <ToggleButtonGroup
             size="small"
@@ -89,7 +91,6 @@ export default function BigBoard() {
             <ToggleButton value="card">Card View</ToggleButton>
             <ToggleButton value="list">List View</ToggleButton>
           </ToggleButtonGroup>
-
           <IconButton onClick={() => setShowFilters(!showFilters)} color="primary">
             <FilterListIcon />
           </IconButton>
@@ -101,11 +102,19 @@ export default function BigBoard() {
 
       {/* CARD VIEW */}
       {view === 'card' && (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} component="div">
           {filteredPlayers.map((p) => (
-            <Grid item xs={12} sm={6} md={3} lg={3} key={p.bio.playerId}>
-              <PlayerCard player={p} />
-            </Grid>
+            <Box
+            key={p.bio.playerId}
+            sx={{
+              flex: '1 1 calc(25% - 24px)', // 4 per row accounting for spacing
+              maxWidth: 'calc(25% - 24px)',
+              boxSizing: 'border-box',
+            }}
+          >
+            <PlayerCard player={p} />
+          </Box>
+          
           ))}
         </Grid>
       )}
